@@ -2,18 +2,18 @@
 client/node_modules/
 server/node_modules/
 
-# Environment variables
+# Environment
 server/.env
 
-# Build output
+# Build
 client/dist/
 
 # Logs
 *.log
 
-# OS files
-.DS_Store
-Thumbs.db
-
 # VS Code
 .vscode/
+
+# OS
+.DS_Store
+Thumbs.db
