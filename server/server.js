@@ -34,6 +34,13 @@ app.use("/api/machines", machineRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/sensors", sensorRoutes);
+// Health Check
+app.get("/api/health", (req, res) => {
+    res.json({
+        status: "ok",
+        message: "Industrial Monitoring API is running"
+    });
+});
 
 // Test Route
 app.get("/", (req, res) => {
@@ -48,3 +55,4 @@ app.listen(PORT, '0.0.0.0', () => {
     startHealthSimulation();
     startSensorSimulation();
 });
+
