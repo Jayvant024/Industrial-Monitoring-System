@@ -270,10 +270,9 @@ const Login = () => {
                 type="button"
                 variant="outlined"
                 fullWidth
-                onClick={() => {
-                  setError('')
-                  setShowRegister(true)
-                }}
+                onClick={() =>
+                  navigate('/register')
+                }
                 sx={{
                   py: 1.5,
                   fontWeight: 700
