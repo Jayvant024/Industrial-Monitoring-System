@@ -35,8 +35,8 @@ exports.authenticate = (req, res, next) => {
 
   // Verify JWT
   jwt.verify(
-    token,
-    process.env.JWT_SECRET || 'secret',
+  token,
+  process.env.JWT_SECRET,
     (err, decoded) => {
 
       if (err) {

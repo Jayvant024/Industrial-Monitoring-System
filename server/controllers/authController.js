@@ -93,12 +93,12 @@ exports.login = (req, res) => {
     };
 
     const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'secret',
-      {
-        expiresIn: '8h'
-      }
-    );
+  payload,
+  process.env.JWT_SECRET,
+  {
+    expiresIn: '8h'
+  }
+);
 
     // Update last login
     db.query(
@@ -203,4 +203,158 @@ exports.me = (req, res) => {
     }
   );
 
+};
+
+
+
+
+// =========================
+// REGISTER / CREATE ACCOUNT
+// =========================
+exports.register = async (req, res) => {
+  try {
+    const {
+      full_name,
+      email,
+      phone,
+      password,
+      confirm_password
+    } = req.body;
+
+    // Validation
+    if (!full_name || !email || !password || !confirm_password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Full name, email, password and confirm password are required'
+      });
+    }
+
+    if (password !== confirm_password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Passwords do not match'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters'
+      });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check duplicate email
+    const checkSql = `
+      SELECT user_id
+      FROM users
+      WHERE email = ?
+      LIMIT 1
+    `;
+
+    db.query(checkSql, [cleanEmail], async (err, results) => {
+      if (err) {
+        console.error('Registration check error:', err);
+
+        return res.status(500).json({
+          success: false,
+          message: 'Database error'
+        });
+      }
+
+      if (results.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: 'An account with this email already exists'
+        });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      /*
+       * Get default Manager role.
+       * New self-created accounts should NOT be allowed
+       * to create themselves as Administrator.
+       */
+     const roleSql = `
+  SELECT role_id
+  FROM roles
+  WHERE role_name = 'Supervisor'
+  LIMIT 1
+`;
+
+      db.query(roleSql, (roleErr, roleResults) => {
+
+        if (roleErr) {
+          console.error('Role lookup error:', roleErr);
+
+          return res.status(500).json({
+            success: false,
+            message: 'Unable to determine default role'
+          });
+        }
+
+        if (roleResults.length === 0) {
+          return res.status(500).json({
+            success: false,
+            message: 'Supervisor role not found in database'
+          });
+        }
+
+       const supervisorRoleId = roleResults[0].role_id;
+
+        const insertSql = `
+          INSERT INTO users
+          (
+            full_name,
+            email,
+            password,
+            phone,
+            role_id,
+            status
+          )
+          VALUES (?, ?, ?, ?, ?, 'Active')
+        `;
+
+        db.query(
+          insertSql,
+          [
+            full_name.trim(),
+            cleanEmail,
+            hashedPassword,
+            phone ? phone.trim() : null,
+            supervisorRoleId
+          ],
+          (insertErr, result) => {
+
+            if (insertErr) {
+              console.error('Registration insert error:', insertErr);
+
+              return res.status(500).json({
+                success: false,
+                message: 'Unable to create account',
+                error: insertErr.message
+              });
+            }
+
+            return res.status(201).json({
+              success: true,
+              message: 'Account created successfully',
+              user_id: result.insertId
+            });
+          }
+        );
+      });
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
 };

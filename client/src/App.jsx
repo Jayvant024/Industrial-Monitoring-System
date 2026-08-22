@@ -33,12 +33,24 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Layout mode={mode} onToggleTheme={() => setMode((current) => (current === 'light' ? 'dark' : 'light'))} />
-      </BrowserRouter>
-      <ToastContainer position="top-right" theme={mode === 'dark' ? 'dark' : 'light'} />
-    </ThemeProvider>
+  <CssBaseline />
+
+  <BrowserRouter basename="/Industrial-Monitoring-System">
+    <Layout
+      mode={mode}
+      onToggleTheme={() =>
+        setMode((current) =>
+          current === 'light' ? 'dark' : 'light'
+        )
+      }
+    />
+  </BrowserRouter>
+
+  <ToastContainer
+    position="top-right"
+    theme={mode === 'dark' ? 'dark' : 'light'}
+  />
+</ThemeProvider>
   )
 }
 
