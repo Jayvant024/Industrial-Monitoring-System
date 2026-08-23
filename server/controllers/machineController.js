@@ -12,7 +12,7 @@ const getMachineSelectSql = () => `
         m.location,
         m.status,
         m.machine_health,
-        m.running_hours,
+        m.operating_hours,
         m.last_health_update,
         m.image_url
     FROM machines m

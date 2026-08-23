@@ -10,7 +10,7 @@ const getHealthStatus = (health) => {
 
 const updateMachineHealth = async () => {
   const sql = `
-    SELECT machine_id, machine_name, machine_health, status, running_hours
+   SELECT machine_id, machine_name, machine_health, status, operating_hours
     FROM machines
     WHERE status IN ('Running','Warning','Maintenance','Critical')
   `;
@@ -22,7 +22,7 @@ const updateMachineHealth = async () => {
       for (const machine of machines) {
         try {
           let nextHealth = Number(machine.machine_health ?? 100);
-          let nextHours = Number(machine.running_hours ?? 0);
+          let nextHours = Number(machine.operating_hours ?? 0);
 
           if (nextHealth <= 0) {
             try {
@@ -60,7 +60,7 @@ const updateMachineHealth = async () => {
             UPDATE machines
             SET
               machine_health = ?,
-              running_hours = ?,
+             operating_hours = ?
               last_health_update = NOW(),
               status = CASE WHEN ? IN ('Running','Stopped','Maintenance','Fault') THEN ? ELSE status END
             WHERE machine_id = ? AND status IN ('Running','Warning','Maintenance','Critical')
