@@ -379,7 +379,7 @@ const Users = () => {
                   <TableRow key={user.user_id} hover>
                     <TableCell>
                       <Avatar
-                        src={user.profile_image ? `http://localhost:5000/${user.profile_image}` : undefined}
+                        src={user.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${user.profile_image}` : undefined}
                         sx={{ width: 38, height: 38, bgcolor: 'primary.main' }}
                       >
                         {!user.profile_image && <FaUser />}
@@ -445,7 +445,7 @@ const Users = () => {
             <DialogTitle sx={{ pb: 1 }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar
-                  src={selectedUser.profile_image ? `http://localhost:5000/${selectedUser.profile_image}` : undefined}
+                  src={selectedUser.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${selectedUser.profile_image}` : undefined}
                   sx={{ width: 68, height: 68, bgcolor: 'primary.main', fontSize: 24 }}
                 >
                   {!selectedUser.profile_image && getInitials(selectedUser.full_name)}

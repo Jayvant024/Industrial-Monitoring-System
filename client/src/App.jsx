@@ -35,7 +35,7 @@ function App() {
     <ThemeProvider theme={theme}>
   <CssBaseline />
 
-  <BrowserRouter basename="/Industrial-Monitoring-System">
+  <BrowserRouter>
     <Layout
       mode={mode}
       onToggleTheme={() =>
