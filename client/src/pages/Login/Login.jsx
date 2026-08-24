@@ -266,12 +266,13 @@ const Login = () => {
 
               {/* CREATE ACCOUNT */}
               <Button
-                type="button"
-                variant="outlined"
-                fullWidth
-                onClick={() =>
-                  navigate('/register')
-                }
+  type="button"
+  variant="outlined"
+  fullWidth
+  onClick={() => {
+    setError('')
+    setShowRegister(true)
+  }}
                 sx={{
                   py: 1.5,
                   fontWeight: 700
