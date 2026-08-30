@@ -93,24 +93,26 @@ const generateSensorReadings = () => {
         LEFT JOIN sensor_thresholds th
             ON ms.machine_sensor_id = th.machine_sensor_id
 
-        WHERE m.status = 'Running'
-        AND ms.status = 'Active'
+       WHERE m.status IN ('Running', 'Maintenance')
+AND ms.status = 'Active'
 
         ORDER BY ms.machine_sensor_id
     `;
 
     db.query(sql, (err, sensors) => {
-        if (err) {
-            console.error("❌ Sensor reading fetch error:", err);
-            return;
-        }
+    if (err) {
+        console.error("❌ SENSOR QUERY ERROR:", err);
+        return;
+    }
 
-        if (sensors.length === 0) {
-            console.log("ℹ️ No running machines with active sensors.");
-            return;
-        }
+    console.log("📡 SENSOR QUERY RESULT:", sensors.length);
 
-        sensors.forEach((sensor) => {
+    if (!sensors || sensors.length === 0) {
+        console.log("ℹ️ No running machines with active sensors.");
+        return;
+    }
+
+    sensors.forEach((sensor) => {
             const threshold = {
                 min_value: sensor.min_value ?? 0,
                 max_value: sensor.max_value ?? 100,

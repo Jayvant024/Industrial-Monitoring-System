@@ -118,10 +118,19 @@ const Dashboard = () => {
     const running = machines.filter((machine) => machine.status === 'Running').length
     const stopped = machines.filter((machine) => machine.status === 'Stopped').length
     const maintenance = machines.filter((machine) => machine.status === 'Maintenance').length
-    const critical = machines.filter((machine) => machine.status === 'Fault' || machine.health < 70).length
-    const avgHealth = machines.length
-      ? Math.round(machines.reduce((acc, item) => acc + Number(item.health ?? 0), 0) / machines.length)
-      : 0
+   const critical = machines.filter(
+  (machine) =>
+    machine.status === 'Fault' ||
+    Number(machine.health ?? 0) < 20
+).length
+   const avgHealth = machines.length
+  ? Math.round(
+      machines.reduce(
+        (acc, item) => acc + Number(item.health ?? 0),
+        0
+      ) / machines.length
+    )
+  : 0
 
     return [
       { title: 'Total Machines', value: machines.length, icon: <FaIndustry />, color: 'primary' },
@@ -165,7 +174,11 @@ const Dashboard = () => {
   const alerts = useMemo(
     () =>
       machines
-        .filter((machine) => machine.health < 80 || machine.status !== 'Running')
+        .filter(
+  (machine) =>
+    Number(machine.machine_health ?? 0) < 80 ||
+    machine.status !== 'Running'
+)
         .slice(0, 4),
     [machines],
   )
@@ -566,7 +579,7 @@ const Dashboard = () => {
                       <Box sx={{ mt: 2, pt: 1.5, borderTop: '1px solid rgba(148,163,184,0.18)' }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ width: '100%', minWidth: 0 }}>
                           <Typography variant="body2" sx={{ fontWeight: 700, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-                            {machine.health}%
+                            {Number(machine.health ?? 0).toFixed(0)}%
                           </Typography>
                           <Link
                             to={`/machines/${machine.machine_id}`}

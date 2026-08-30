@@ -44,9 +44,15 @@ const Machines = () => {
     }
   }
 
-  useEffect(() => {
+useEffect(() => {
+  loadMachines()
+
+  const interval = setInterval(() => {
     loadMachines()
-  }, [])
+  }, 30000)
+
+  return () => clearInterval(interval)
+}, [])
 
   const filteredMachines = useMemo(() => {
     return machines.filter((machine) => {

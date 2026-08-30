@@ -1,5 +1,15 @@
 const mysql = require("mysql2");
-require("dotenv").config();
+const path = require("path");
+
+require("dotenv").config({
+  path: path.join(__dirname, "../.env")
+});
+console.log("DB CONFIG:", {
+  host: process.env.MYSQLHOST || process.env.DB_HOST,
+  user: process.env.MYSQLUSER || process.env.DB_USER,
+  database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+  port: Number(process.env.MYSQLPORT || process.env.DB_PORT) || 3306
+});
 
 const db = mysql.createPool({
   host: process.env.MYSQLHOST || process.env.DB_HOST,
